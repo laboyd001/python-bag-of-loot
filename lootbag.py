@@ -9,6 +9,8 @@
 import sqlite3
 import sys
 
+print(sys.argv)
+
 lootbag_db = 'lootbag.db'
 
 def getChildren():
@@ -61,9 +63,11 @@ def addGift(gift):
     """add gift to the gifts table
     
     Arguments:
-        gift_name -- [name of the gift]
-        child_name -- [name of the child] 
-        delivered -- [was the gift delivered, true/false]
+        gift -- {
+            "name": [name of toy],
+            "child_name": [name of child]
+        }
+        
     """
     with sqlite3.connect(lootbag_db) as conn:
         cursor = conn.cursor()
@@ -77,10 +81,37 @@ def addGift(gift):
                 WHERE c.name = '{child_name}'
                 """, (None, gift['name'],0)
             )
-
            
         except sqlite3.OperationalError as err:
             print('oops', err)
+
+# def removeGift(gift):
+#     """remove gift to the gifts table
+    
+#     Arguments:
+#         gift -- {
+#             "name": [name of toy],
+#             "child_name": [name of child]
+#         }
+        
+#     """
+#     with sqlite3.connect(lootbag_db) as conn:
+#         cursor = conn.cursor()
+#         child_name = gift['child_name']
+#         gift_name = gift['gift_name']
+#         try:
+#             cursor.execute(
+#                 f"""
+#                 DELETE FROM gifts
+#                 SELECT ?,?,?, childid
+#                 FROM children c
+#                 WHERE c.name = '{child_name}' AND
+#                 gifts.name = '{gift_name}'
+#                 """, (None, gift['name'],0)
+#             )
+           
+#         except sqlite3.OperationalError as err:
+#             print('oops', err)
 
 
 if __name__ == '__main__':
@@ -89,7 +120,13 @@ if __name__ == '__main__':
     #     "name":"Lesley",
     #     "receiving":1
     # })
-    addGift({
-        'name': 'computer',
-        'child_name': 'Lesley'
-    })
+    # addGift({
+    #     'name': 'car',
+    #     'child_name': 'Lesley'
+    # })
+
+    if sys.argv[1] == 'add':
+        addGift({
+        'name': sys.argv[2],
+        'child_name': sys.argv[3]  
+        })
