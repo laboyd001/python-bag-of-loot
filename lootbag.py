@@ -125,6 +125,25 @@ def ls():
             return kid_list
         except sqlite3.OperationalError as err:
             print("oops", err)
+
+def ls_gift(child_name):
+    """print gifts for a specific kid"""
+    with sqlite3.connect(lootbag_db) as conn:
+        cursor = conn.cursor()
+    
+        try:
+            cursor.execute(
+                f"""
+                SELECT name
+                FROM gifts 
+                WHERE childid in (SELECT c.childid from Children c WHERE c.name = '{child_name}' and c.receiving = 1)
+                """
+            )
+            kid_list = cursor.fetchall()
+            print("These are the gifts for the requested name:", kid_list)
+            return kid_list
+        except sqlite3.OperationalError as err:
+            print("oops", err)
        
 
 
@@ -168,7 +187,8 @@ if __name__ == '__main__':
 # ===================================================
 # 4. List toys in the bag o' loot for a specific child.
 # ===================================================
-    
+    elif sys.argv[1] == 'list':
+        ls_gift(sys.argv[2])
     
     
 # ===================================================
