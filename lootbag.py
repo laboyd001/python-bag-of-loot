@@ -81,7 +81,7 @@ def addGift(gift):
         except sqlite3.OperationalError as err:
             print('oops', err)
 
-def removeGift(child_name,gift):
+def removeGift(gift):
     """remove gift to the gifts table
     
     Arguments:
@@ -92,11 +92,13 @@ def removeGift(child_name,gift):
         cursor = conn.cursor()
         # child_name = gift['child_name']
         gift_name = gift['gift_name']
+        child_name = gift['child_name']
         try:
             cursor.execute(
                 f"""
-                DELETE FROM gifts
-                WHERE gifts.name = '{gift_name}'
+                DELETE FROM Gifts 
+                WHERE childid in (select c.childid from children c where c.name = '{child_name}')
+                and name = '{gift_name}'
                 """
             )
            
@@ -125,13 +127,12 @@ if __name__ == '__main__':
         })
 
 # ===================================================
-# FIXME:
 # 2.Remove a toy from the bag o' loot in case a child's status changes before delivery starts.
-# FIXME:
 # ==================================================
     elif sys.argv[1] == 'remove':
         removeGift({
-        'gift_name': sys.argv[2] 
+        'child_name': sys.argv[2],
+        'gift_name': sys.argv[3],
         })
     elif sys.argv[1] == 'add_child':
         addChild({
@@ -144,3 +145,8 @@ if __name__ == '__main__':
 # ===================================================
     elif sys.argv[1] == 'ls':
         getChildren()
+
+# ===================================================
+# 4. List toys in the bag o' loot for a specific child.
+# ===================================================
+
