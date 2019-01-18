@@ -105,6 +105,28 @@ def removeGift(gift):
         except sqlite3.OperationalError as err:
             print('oops', err)
 
+def ls(): 
+    """print all the kids that are recieving presents
+     
+    """
+    with sqlite3.connect(lootbag_db) as conn:
+        cursor = conn.cursor()
+        
+        try:
+            cursor.execute(
+                f"""
+                SELECT *
+                FROM children
+                WHERE receiving == 1
+                """
+            )
+            kid_list = cursor.fetchall()
+            print("These are the kids receving gifts:", kid_list)
+            return kid_list
+        except sqlite3.OperationalError as err:
+            print("oops", err)
+       
+
 
 if __name__ == '__main__':
     # getChildren()
@@ -126,6 +148,7 @@ if __name__ == '__main__':
         'child_name': sys.argv[3]  
         })
 
+
 # ===================================================
 # 2.Remove a toy from the bag o' loot in case a child's status changes before delivery starts.
 # ==================================================
@@ -134,19 +157,25 @@ if __name__ == '__main__':
         'child_name': sys.argv[2],
         'gift_name': sys.argv[3],
         })
-    elif sys.argv[1] == 'add_child':
-        addChild({
-            "name": sys.argv[2],
-            "receiving": sys.argv[3]
-        })
+    
 
 # ===================================================
 # 3. Produce a list of children currently receiving presents.
 # ===================================================
     elif sys.argv[1] == 'ls':
-        getChildren()
+        ls()
 
 # ===================================================
 # 4. List toys in the bag o' loot for a specific child.
 # ===================================================
-
+    
+    
+    
+# ===================================================
+# The command below adds kids for testing 
+# ===================================================
+    elif sys.argv[1] == 'add_child':
+        addChild({
+            "name": sys.argv[2],
+            "receiving": sys.argv[3]
+        })
