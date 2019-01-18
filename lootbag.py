@@ -1,9 +1,5 @@
 # You have an acquaintance whose job is to, once a year, delivery presents to the best kids around the world. They have a problem, though. There are so many good boys and girls in the world now, that their old paper accounting systems just don't cut it anymore. They want you to write a program that will let them do the following tasks.
 
-# 1.Add a toy to the bag o' loot, and label it with the child's name who will receive it. The first argument must be the word add. The second argument is the gift to be delivered. The third argument is the name of the child.
-
-# python lootbag.py add kite suzy
-# python lootbag.py add baseball michael
 
 # addSuper() will be like addChild()
 import sqlite3
@@ -85,33 +81,27 @@ def addGift(gift):
         except sqlite3.OperationalError as err:
             print('oops', err)
 
-# def removeGift(gift):
-#     """remove gift to the gifts table
+def removeGift(child_name,gift):
+    """remove gift to the gifts table
     
-#     Arguments:
-#         gift -- {
-#             "name": [name of toy],
-#             "child_name": [name of child]
-#         }
+    Arguments:
         
-#     """
-#     with sqlite3.connect(lootbag_db) as conn:
-#         cursor = conn.cursor()
-#         child_name = gift['child_name']
-#         gift_name = gift['gift_name']
-#         try:
-#             cursor.execute(
-#                 f"""
-#                 DELETE FROM gifts
-#                 SELECT ?,?,?, childid
-#                 FROM children c
-#                 WHERE c.name = '{child_name}' AND
-#                 gifts.name = '{gift_name}'
-#                 """, (None, gift['name'],0)
-#             )
+        "child_name": [name of child]  
+    """
+    with sqlite3.connect(lootbag_db) as conn:
+        cursor = conn.cursor()
+        # child_name = gift['child_name']
+        gift_name = gift['gift_name']
+        try:
+            cursor.execute(
+                f"""
+                DELETE FROM gifts
+                WHERE gifts.name = '{gift_name}'
+                """
+            )
            
-#         except sqlite3.OperationalError as err:
-#             print('oops', err)
+        except sqlite3.OperationalError as err:
+            print('oops', err)
 
 
 if __name__ == '__main__':
@@ -124,9 +114,33 @@ if __name__ == '__main__':
     #     'name': 'car',
     #     'child_name': 'Lesley'
     # })
+# ==================================================
+# 1. Add a toy to the bag o' loot, and label it with the child's name who will receive it. The first argument must be the word add. The second argument is the gift to be delivered. The third argument is the name of the child.
+# ==================================================
 
     if sys.argv[1] == 'add':
         addGift({
         'name': sys.argv[2],
         'child_name': sys.argv[3]  
         })
+
+# ===================================================
+# FIXME:
+# 2.Remove a toy from the bag o' loot in case a child's status changes before delivery starts.
+# FIXME:
+# ==================================================
+    elif sys.argv[1] == 'remove':
+        removeGift({
+        'gift_name': sys.argv[2] 
+        })
+    elif sys.argv[1] == 'add_child':
+        addChild({
+            "name": sys.argv[2],
+            "receiving": sys.argv[3]
+        })
+
+# ===================================================
+# 3. Produce a list of children currently receiving presents.
+# ===================================================
+    elif sys.argv[1] == 'ls':
+        getChildren()
