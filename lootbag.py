@@ -11,12 +11,51 @@ import sys
 
 lootbag_db = 'lootbag.db'
 
-class Lootbag():
-    
-    
-    def addChild():
-        """method that adds children
-        """
+def getChildren():
+    with sqlite3.connect(lootbag_db) as conn:
+        cursor = conn.cursor()
 
-        with sqlite3.connect(lootbag_db) as conn:
-            cursor = conn.cursor()
+        children = cursor.execute('SELECT * FROM children')
+        children = cursor.fetchall()
+        print(children)
+
+def getChild(child):
+    with sqlite3.connect(lootbag_db) as conn:
+        cursor = conn.cursor()
+
+        cursor.execute(f'''SELECT c.*, gift.name
+                           FROM children c
+                           JOIN gifts g
+                           ON c.childid = g.childid
+                           WHERE c.name = '{child}'
+                           '''
+                       )
+
+        child = cursor.fetchone()
+        print(child)
+        return child
+    
+    
+def addChild(child):
+    """method that adds children
+    """
+
+    with sqlite3.connect(lootbag_db) as conn:
+        cursor = conn.cursor()
+
+        try:
+            cursor.execute(
+                '''
+                INSERT INTO children
+                Values(?,?,?)
+                ''', (None, child['name'], child['receiving'])
+            )
+        except sqlite3.OperationalError as err:
+            print('oops', err)
+
+if __name__ == '__main__':
+    # getChildren()
+    addChild({
+        "name":"Lesley",
+        "receiving":1
+    })
