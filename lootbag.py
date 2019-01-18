@@ -38,6 +38,10 @@ def getChild(child):
     
 def addChild(child):
     """method that adds children
+
+    Arguments:
+        child {name} -- [name of the child]
+        child {receiving} -- [is the kid able to receive gifts,true/false]
     """
 
     with sqlite3.connect(lootbag_db) as conn:
@@ -53,9 +57,39 @@ def addChild(child):
         except sqlite3.OperationalError as err:
             print('oops', err)
 
+def addGift(gift):
+    """add gift to the gifts table
+    
+    Arguments:
+        gift_name -- [name of the gift]
+        child_name -- [name of the child] 
+        delivered -- [was the gift delivered, true/false]
+    """
+    with sqlite3.connect(lootbag_db) as conn:
+        cursor = conn.cursor()
+        child_name = gift['child_name']
+        try:
+            cursor.execute(
+                f"""
+                INSERT INTO gifts
+                SELECT ?,?,?, childid
+                FROM children c
+                WHERE c.name = '{child_name}'
+                """, (None, gift['name'],0)
+            )
+
+           
+        except sqlite3.OperationalError as err:
+            print('oops', err)
+
+
 if __name__ == '__main__':
     # getChildren()
-    addChild({
-        "name":"Lesley",
-        "receiving":1
+    # addChild({
+    #     "name":"Lesley",
+    #     "receiving":1
+    # })
+    addGift({
+        'name': 'computer',
+        'child_name': 'Lesley'
     })
