@@ -61,6 +61,17 @@ class Lootbag:
                     Values(?,?,?)
                     ''', (None, child['name'], child['receiving'])
                 )
+                # added_kid = cursor.execute(
+                #     '''SELECT name
+                #        FROM children
+                #        ORDER BY childid desc
+                #        LIMIT 1
+                #     '''
+                # )
+                added_kid_print = cursor.fetchall()
+                for kid in added_kid_print:
+                    print("You just added the following kid to the lootbag list:", kid)
+                    return kid
             except sqlite3.OperationalError as err:
                 print('oops', err)
 
@@ -87,7 +98,7 @@ class Lootbag:
                     WHERE c.name = '{child_name}'
                     """, (None, gift['name'],0)
                 )
-            
+                return(gift)
             except sqlite3.OperationalError as err:
                 print('oops', err)
 
